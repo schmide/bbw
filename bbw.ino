@@ -5,7 +5,8 @@ The defines calculate the base ratios and set some generic functions for porting
 
 SendBytes and RecieveBytes basically do an operation then a delay. 
 The delays are in 2 arrays and are generally in order.
- */
+
+*/
 
 #define INPUT_PIN 13
 #define OUTPUT_PIN 13
