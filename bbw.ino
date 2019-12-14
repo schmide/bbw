@@ -1,10 +1,10 @@
 // bbw.cpp : bit bang wheele
 //
 /*
-The defines calculate the base ratios and set some generic functions for porting.
+  The defines calculate the base ratios and set some generic functions for porting.
 
-SendBytes and RecieveBytes basically do an operation then a delay. 
-The delays are in 2 arrays and are generally in order.
+  SendBytes and RecieveBytes basically do an operation then a delay.
+  The delays are in 2 arrays and are generally in order.
 
 */
 
@@ -35,19 +35,20 @@ void SendBytes(unsigned char *send, int sizeSend, float *delays = defaultSendDel
   DELAY(delays[0]);
   SET_BIT(true);
   DELAY(delays[1]);
-  for (int i = 0; i < sizeSend; i++) {
+  unsigned char *end = &send[sizeSend];
+  do {
     SET_BIT(false);
     DELAY(delays[2]);
     unsigned char bit = MSB_FIRST ? 1 << 7 : 1;
     unsigned char end = MSB_FIRST ? 1 : 1 << 7;
     do {
-      SET_BIT(send[i] & bit ? true : false);
+      SET_BIT(*send & bit ? true : false);
       DELAY(delays[3]);
       MSB_FIRST ? bit <<= 1 : bit >>= 1;
     } while (!(bit & end));
     SET_BIT(true);
     DELAY(delays[4]);
-  }
+  } while (++send < end);
 }
 
 int ReceiveBytes(unsigned char *receive, int sizeReceive, float *delays = defaultReceiveDelays)
@@ -56,27 +57,24 @@ int ReceiveBytes(unsigned char *receive, int sizeReceive, float *delays = defaul
   DELAY(delays[0]);
   int readCount = 0;
   int egg = TIME();
-  for (int i = 0; i < sizeReceive; i++) {
+  unsigned char *end = &receive[sizeReceive];
+  do {
+    while (GET_BIT()) {
+      if (DUCKGOOSEEGG(TIME(), delays[1], egg))
+        return readCount;
+      DELAY(delays[2]);
+    }
+    DELAY(delays[3]);
+    unsigned char bit = MSB_FIRST ? 1 << 7 : 1;
+    unsigned char end = MSB_FIRST ? 1 : 1 << 7;
     do {
-      if (GET_BIT()) {
-        if (DUCKGOOSEEGG(TIME(), delays[1], egg))
-          return readCount;
-        DELAY(delays[2]);
-      } else {
-        DELAY(delays[3]);
-        unsigned char bit = MSB_FIRST ? 1 << 7 : 1;
-        unsigned char end = MSB_FIRST ? 1 : 1 << 7;
-        do {
-          GET_BIT() ? receive[i] |= bit : receive[i] &= ~bit;
-          DELAY(delays[4]);
-          MSB_FIRST ? bit <<= 1 : bit >>= 1;
-        } while (!(bit & end));
-        readCount++;
-        egg = TIME();
-        break;
-      }
-    } while (true);
-  }
+      GET_BIT() ? *receive |= bit : *receive &= ~bit;
+      DELAY(delays[4]);
+      MSB_FIRST ? bit <<= 1 : bit >>= 1;
+    } while (!(bit & end));
+    readCount++;
+    egg = TIME();
+  } while (++receive < end);
   return readCount;
 }
 
