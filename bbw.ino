@@ -26,7 +26,7 @@
 unsigned char sendBuffer[] = { 0x55, 0x9c };
 unsigned char receiveBuffer[9];
 float defaultSendDelays[] = { 1.0 * STARTDELAY, 1.0 * PERIOD_BAUD, 1.0 * PERIOD_BAUD, 1.0 * PERIOD_BAUD, 1.0 * PERIOD_BAUD };
-float defaultReceiveDelays[] = { 1.0 * PERIOD_SLEW, 1.0 * READTIMEOUT, 1.0 * PERIOD_BAUD, 1.0 * PERIOD_BAUD, 1.0 * PERIOD_BAUD };
+float defaultReceiveDelays[] = { 1.0 * PERIOD_SLEW, 1.0 * READTIMEOUT, 1.0 * PERIOD_BAUD, 1.0 * PERIOD_BAUD, 1.0 * PERIOD_BAUD, 1.0 * PERIOD_BAUD, 1 };
 
 void SendBytes(unsigned char *send, int sizeSend, float *delays = defaultSendDelays)
 {
@@ -68,12 +68,18 @@ int ReceiveBytes(unsigned char *receive, int sizeReceive, float *delays = defaul
     unsigned char bit = MSB_FIRST ? 1 << 7 : 1;
     unsigned char end = MSB_FIRST ? 1 : 1 << 7;
     do {
-      GET_BIT() ? *receive |= bit : *receive &= ~bit;
-      DELAY(delays[4]);
+      if (GET_BIT()) {
+        *receive |= bit;
+        DELAY(delays[4]);
+      } else {
+        *receive &= ~bit;
+        DELAY(delays[5]);
+      }
       MSB_FIRST ? bit <<= 1 : bit >>= 1;
     } while (bit ^ end);
     readCount++;
     egg = TIME();
+    DELAY(delays[6]);
   } while (++receive < end);
   return readCount;
 }
