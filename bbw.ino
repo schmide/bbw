@@ -71,7 +71,7 @@ int ReceiveBytes(unsigned char *receive, int sizeReceive, float *delays = defaul
       GET_BIT() ? *receive |= bit : *receive &= ~bit;
       DELAY(delays[4]);
       MSB_FIRST ? bit <<= 1 : bit >>= 1;
-    } while (!(bit & end));
+    } while (bit ^ end);
     readCount++;
     egg = TIME();
   } while (++receive < end);
