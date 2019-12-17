@@ -45,7 +45,7 @@ void SendBytes(unsigned char *send, int sizeSend, float *delays = defaultSendDel
       SET_BIT(*send & bit ? true : false);
       DELAY(delays[3]);
       MSB_FIRST ? bit <<= 1 : bit >>= 1;
-    } while (!(bit & end));
+    } while (bit ^ end);
     SET_BIT(true);
     DELAY(delays[4]);
   } while (++send < end);
