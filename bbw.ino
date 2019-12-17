@@ -40,12 +40,11 @@ void SendBytes(unsigned char *send, int sizeSend, float *delays = defaultSendDel
     SET_BIT(false);
     DELAY(delays[2]);
     unsigned char bit = MSB_FIRST ? 1 << 7 : 1;
-    unsigned char end = MSB_FIRST ? 1 : 1 << 7;
     do {
       SET_BIT(*send & bit ? true : false);
       DELAY(delays[3]);
       MSB_FIRST ? bit <<= 1 : bit >>= 1;
-    } while (bit ^ end);
+    } while (bit);
     SET_BIT(true);
     DELAY(delays[4]);
   } while (++send < end);
@@ -66,7 +65,6 @@ int ReceiveBytes(unsigned char *receive, int sizeReceive, float *delays = defaul
     }
     DELAY(delays[3]);
     unsigned char bit = MSB_FIRST ? 1 << 7 : 1;
-    unsigned char end = MSB_FIRST ? 1 : 1 << 7;
     do {
       if (GET_BIT()) {
         *receive |= bit;
@@ -76,7 +74,7 @@ int ReceiveBytes(unsigned char *receive, int sizeReceive, float *delays = defaul
         DELAY(delays[5]);
       }
       MSB_FIRST ? bit <<= 1 : bit >>= 1;
-    } while (bit ^ end);
+    } while (bit);
     readCount++;
     egg = TIME();
     DELAY(delays[6]);
