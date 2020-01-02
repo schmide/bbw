@@ -35,6 +35,7 @@ unsigned char sendBuffer[] = { 0xaa, 0x9c, 0x55, 0xaa, 0x9c, 0x55 };
 unsigned char receiveBuffer[9];
 float defaultSendDelays[] = { 1.0 * PERIOD_DELAY_MICRO, 1.0 * PERIOD_DELAY_MICRO, 2.0 * PERIOD_DELAY_MICRO };
 float defaultReceiveDelays[] = { 1.0 * PERIOD_SLEW, 1.0 * READTIMEOUT, 1.0 * PERIOD_DELAY_MICRO, 1.0 * PERIOD_DELAY_MICRO, 1.0 * PERIOD_DELAY_MICRO, 1.0 * PERIOD_DELAY_MICRO, 1 };
+
 void SendBytes(unsigned char *send, int sizeSend, float *delays = defaultSendDelays)
 {
   unsigned char *end = &send[sizeSend];
@@ -52,6 +53,7 @@ void SendBytes(unsigned char *send, int sizeSend, float *delays = defaultSendDel
   } while (++send < end);
 }
 
+// not near done.
 int ReceiveBytes(unsigned char *receive, int sizeReceive, float *delays = defaultReceiveDelays)
 {
   DELAY(delays[0]);
