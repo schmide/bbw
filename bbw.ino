@@ -8,51 +8,52 @@
 
 */
 
+#define TIME() micros()
+#define DUCKGOOSEEGG(duck, goose, egg) ( [=, &egg]() { if (duck - egg < goose) return 0; egg = duck; return -1; } () )
+#define DUCKGOOSE(duck, goose) ( [=]() { static unsigned long egg = 0; if (duck - egg < goose) return 0; egg = duck; return -1; } () )
+
+void DelayMicro(unsigned long micro)
+{
+  unsigned long egg = TIME() + micro;
+  while (TIME() < egg);
+}
+
 #define INPUT_PIN 13
-#define OUTPUT_PIN 13
-#define TIME() millis()
+#define OUTPUT_PIN 18
 #define MSB_FIRST true
-#define BAUD 19200
-#define PERIOD 1000000
-#define PERIOD_BAUD (PERIOD / BAUD)
-#define PERIOD_SLEW (0.5 * PERIOD_BAUD)
-#define STARTDELAY (13 * PERIOD_BAUD)
-#define READTIMEOUT (32 * PERIOD_BAUD)
-#define DELAY(a) delay((unsigned long)(a));
+// below tested on 16mhz mega
+#define PERIOD_DELAY_MICRO 9 // 90 = 9600 36 = 19200 9 = 38400 3 = 48000 0 = 53.5k
+#define PERIOD_SLEW (0.5 * PERIOD_DELAY_MICRO)
+#define STARTDELAY (13 * PERIOD_DELAY_MICRO)
+#define READTIMEOUT (32 * PERIOD_DELAY_MICRO)
+#define DELAY(a) DelayMicro((unsigned long)(a))
+//#define DELAY(a) while(DUCKGOOSE(TIME(), (unsigned long)(a)));
 #define SET_BIT(a) digitalWrite(OUTPUT_PIN, a)
 #define GET_BIT() digitalRead(INPUT_PIN)
-#define DUCKGOOSEEGG(duck, goose, egg) ( [=, &egg]() { if (duck - egg < goose) return 0; egg = duck; return -1; } () )
 
-unsigned char sendBuffer[] = { 0x55, 0x9c };
+unsigned char sendBuffer[] = { 0xaa, 0x9c, 0x55, 0xaa, 0x9c, 0x55 };
 unsigned char receiveBuffer[9];
-float defaultSendDelays[] = { 1.0 * STARTDELAY, 1.0 * PERIOD_BAUD, 1.0 * PERIOD_BAUD, 1.0 * PERIOD_BAUD, 1.0 * PERIOD_BAUD };
-float defaultReceiveDelays[] = { 1.0 * PERIOD_SLEW, 1.0 * READTIMEOUT, 1.0 * PERIOD_BAUD, 1.0 * PERIOD_BAUD, 1.0 * PERIOD_BAUD, 1.0 * PERIOD_BAUD, 1 };
-
+float defaultSendDelays[] = { 1.0 * PERIOD_DELAY_MICRO, 1.0 * PERIOD_DELAY_MICRO, 2.0 * PERIOD_DELAY_MICRO };
+float defaultReceiveDelays[] = { 1.0 * PERIOD_SLEW, 1.0 * READTIMEOUT, 1.0 * PERIOD_DELAY_MICRO, 1.0 * PERIOD_DELAY_MICRO, 1.0 * PERIOD_DELAY_MICRO, 1.0 * PERIOD_DELAY_MICRO, 1 };
 void SendBytes(unsigned char *send, int sizeSend, float *delays = defaultSendDelays)
 {
-  pinMode(OUTPUT_PIN, OUTPUT);
-  SET_BIT(false);
-  DELAY(delays[0]);
-  SET_BIT(true);
-  DELAY(delays[1]);
   unsigned char *end = &send[sizeSend];
   do {
     SET_BIT(false);
-    DELAY(delays[2]);
+    DELAY(delays[0]);
     unsigned char bit = MSB_FIRST ? 1 << 7 : 1;
     do {
       SET_BIT(*send & bit ? true : false);
-      DELAY(delays[3]);
-      MSB_FIRST ? bit <<= 1 : bit >>= 1;
+      DELAY(delays[1]);
+      MSB_FIRST ? bit >>= 1 : bit <<= 1;
     } while (bit);
     SET_BIT(true);
-    DELAY(delays[4]);
+    DELAY(delays[2]);
   } while (++send < end);
 }
 
 int ReceiveBytes(unsigned char *receive, int sizeReceive, float *delays = defaultReceiveDelays)
 {
-  pinMode(INPUT_PIN, INPUT);
   DELAY(delays[0]);
   int readCount = 0;
   int egg = TIME();
@@ -73,7 +74,7 @@ int ReceiveBytes(unsigned char *receive, int sizeReceive, float *delays = defaul
         *receive &= ~bit;
         DELAY(delays[5]);
       }
-      MSB_FIRST ? bit <<= 1 : bit >>= 1;
+      MSB_FIRST ? bit >>= 1 : bit <<= 1;
     } while (bit);
     readCount++;
     egg = TIME();
@@ -83,9 +84,24 @@ int ReceiveBytes(unsigned char *receive, int sizeReceive, float *delays = defaul
 }
 
 void setup() {
+  Serial.begin(9600);
+  pinMode(INPUT_PIN, INPUT);
+  pinMode(OUTPUT_PIN, OUTPUT);
+  SET_BIT(true);
 }
 
+bool state = true;
+
 void loop() {
-  SendBytes(sendBuffer, sizeof(sendBuffer) / sizeof(sendBuffer[0]));
-  ReceiveBytes(receiveBuffer, sizeof(receiveBuffer) / sizeof(receiveBuffer[0]));
+  if (true) {
+    SendBytes(sendBuffer, sizeof(sendBuffer) / sizeof(sendBuffer[0]));
+    delay(1);
+//    Serial.print("Delay = ");
+//    Serial.println(((unsigned int)defaultSendDelays[3]));
+    //  ReceiveBytes(receiveBuffer, sizeof(receiveBuffer) / sizeof(receiveBuffer[0]));
+  } else {
+    SET_BIT(state);
+    state = !state;
+    //  DELAY(1);
+  }
 }
