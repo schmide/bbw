@@ -22,7 +22,7 @@ void DelayMicro(unsigned long micro)
 #define OUTPUT_PIN 18
 #define MSB_FIRST true
 // below tested on 16mhz mega
-#define PERIOD_DELAY_MICRO 10 // 90 = 9600 36 = 19200 9 = 38400 3 = 48000 0 = 53.5k
+#define PERIOD_DELAY_MICRO 10 // 90 = 9600 36 = 19200 10 = 38400 3 = 48000 0 = 53.5k
 #define PERIOD_SLEW (0.5 * PERIOD_DELAY_MICRO)
 #define STARTDELAY (13 * PERIOD_DELAY_MICRO)
 #define READTIMEOUT (32 * PERIOD_DELAY_MICRO)
