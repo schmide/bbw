@@ -4,6 +4,17 @@
   The defines calculate the base ratios and set some generic functions for porting.
   SendBytes and RecieveBytes basically do an operation then a delay.
   The delays are in 2 arrays and are generally in order.
+
+  table of baud 
+  26 = 9600 
+  12 = 19200 
+   6 = 38400 
+   4 = 59500 
+   3 = 83900 (odd numbers do not do well)
+   2 = 119600 
+   1 = 215000 
+
+  set in PERIOD_DELAY_MICRO
 */
 
 #define TIME() micros()
@@ -11,7 +22,7 @@
 #define OUTPUT_PIN 18
 #define MSB_FIRST true
 // below tested on 16mhz mega
-#define PERIOD_DELAY_MICRO 6 // 24 = 9600 12 = 19200 6 = 38400 4 = 57600 2 = 115200 (greater than 6 ehh)
+#define PERIOD_DELAY_MICRO 12  
 #define PERIOD_SLEW (0.5 * PERIOD_DELAY_MICRO)
 #define STARTDELAY (13 * PERIOD_DELAY_MICRO)
 #define READTIMEOUT (32 * PERIOD_DELAY_MICRO)
