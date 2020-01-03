@@ -11,7 +11,7 @@
 #define OUTPUT_PIN 18
 #define MSB_FIRST true
 // below tested on 16mhz mega
-#define PERIOD_DELAY_MICRO 12 // 12 = 19200
+#define PERIOD_DELAY_MICRO 6 // 24 = 9600 12 = 19200 6 = 38400 4 = 57600 2 = 115200 (greater than 6 ehh)
 #define PERIOD_SLEW (0.5 * PERIOD_DELAY_MICRO)
 #define STARTDELAY (13 * PERIOD_DELAY_MICRO)
 #define READTIMEOUT (32 * PERIOD_DELAY_MICRO)
