@@ -9,9 +9,9 @@
   26 = 9600 
   12 = 19200 
    6 = 38400 
-   4 = 59500 
+   4 = 63000 (trouble starts here) 
    3 = 83900 (odd numbers do not do well)
-   2 = 119600 
+   2 = 119600 (oddly these high numbers do well)
    1 = 215000 
 
   set in PERIOD_DELAY_MICRO
@@ -22,7 +22,7 @@
 #define OUTPUT_PIN 18
 #define MSB_FIRST true
 // below tested on 16mhz mega
-#define PERIOD_DELAY_MICRO 12  
+#define PERIOD_DELAY_MICRO 6  
 #define PERIOD_SLEW (0.5 * PERIOD_DELAY_MICRO)
 #define STARTDELAY (13 * PERIOD_DELAY_MICRO)
 #define READTIMEOUT (32 * PERIOD_DELAY_MICRO)
