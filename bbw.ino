@@ -30,10 +30,13 @@ void DelayMicro(unsigned long micro)
 #define SET_BIT(a) digitalWrite(OUTPUT_PIN, a)
 #define GET_BIT() digitalRead(INPUT_PIN)
 
-unsigned char sendBuffer[] = { 0xaa, 0x9c, 0x55, 0xaa, 0x9c, 0x55 };
+unsigned char sendBuffer[] = { 0xaa, 0x9c, 0x55, 0xaa, 0x9c, 0x55, 0xaa, 0x9c, 0x55, 0xaa, 0x9c, 0x55, 0xaa, 0x9c, 0x55, 0xaa, 0x9c, 0x55, 0xaa, 0x9c, 0x55, 0xaa, 0x9c, 0x55 };
 unsigned char receiveBuffer[9];
 float defaultReceiveDelays[] = { 1.0 * PERIOD_SLEW, 1.0 * READTIMEOUT, 1.0 * PERIOD_DELAY_MICRO, 1.0 * PERIOD_DELAY_MICRO, 1.0 * PERIOD_DELAY_MICRO, 1.0 * PERIOD_DELAY_MICRO, 1 };
-unsigned char defaultSendDelays[] = { (unsigned char)(1.0 * PERIOD_DELAY_MICRO), (unsigned char)(1.0 * PERIOD_DELAY_MICRO), (unsigned char)((2.0 * PERIOD_DELAY_MICRO)) };
+unsigned char defaultSendDelays[] = { \
+(unsigned char)(1.0 * PERIOD_DELAY_MICRO), \
+(unsigned char)(1.0 * PERIOD_DELAY_MICRO), \
+(unsigned char)(1.0 * PERIOD_DELAY_MICRO) };
 
 void SendBytes(unsigned char *send, int sizeSend, unsigned char *delays = defaultSendDelays)
 {
@@ -47,7 +50,6 @@ void SendBytes(unsigned char *send, int sizeSend, unsigned char *delays = defaul
       MSB_FIRST ? bit >>= 1 : bit <<= 1;
     } while (bit);
     DELAY_HAMMER(delays[2], SET_BIT(true));
-    DELAY(delays[2]);
   } while (++send < end);
 }
 
@@ -95,8 +97,8 @@ bool state = true;
 void loop() {
   if (true) {
     SendBytes(sendBuffer, sizeof(sendBuffer) / sizeof(sendBuffer[0]));
-    DELAY(16);
-//    delay(1);
+//    DELAY(16);
+    delay(1000);
 //    Serial.print("Delay = ");
 //    Serial.println(((unsigned int)defaultSendDelays[3]));
     //  ReceiveBytes(receiveBuffer, sizeof(receiveBuffer) / sizeof(receiveBuffer[0]));
