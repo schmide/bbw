@@ -26,32 +26,27 @@ void DelayMicro(unsigned long micro)
 #define READTIMEOUT (32 * PERIOD_DELAY_MICRO)
 //#define DELAY(a) DelayMicro((unsigned long)(a))
 #define DELAY(a) { unsigned long egg = TIME() + (unsigned long)(a); while (TIME() <= egg); }
-#define DELAY_HAMMER(a, b) { while(a--) b; }
+#define DELAY_HAMMER(a, b) { unsigned char h=a; do { (b); } while(--h); } 
 #define SET_BIT(a) digitalWrite(OUTPUT_PIN, a)
 #define GET_BIT() digitalRead(INPUT_PIN)
 
 unsigned char sendBuffer[] = { 0xaa, 0x9c, 0x55, 0xaa, 0x9c, 0x55 };
 unsigned char receiveBuffer[9];
-//float defaultSendDelays[] = { 1.0 * PERIOD_DELAY_MICRO, 1.0 * PERIOD_DELAY_MICRO, 2.0 * PERIOD_DELAY_MICRO };
 float defaultReceiveDelays[] = { 1.0 * PERIOD_SLEW, 1.0 * READTIMEOUT, 1.0 * PERIOD_DELAY_MICRO, 1.0 * PERIOD_DELAY_MICRO, 1.0 * PERIOD_DELAY_MICRO, 1.0 * PERIOD_DELAY_MICRO, 1 };
 unsigned char defaultSendDelays[] = { (unsigned char)(1.0 * PERIOD_DELAY_MICRO), (unsigned char)(1.0 * PERIOD_DELAY_MICRO), (unsigned char)((2.0 * PERIOD_DELAY_MICRO)) };
 
 void SendBytes(unsigned char *send, int sizeSend, unsigned char *delays = defaultSendDelays)
 {
   unsigned char *end = &send[sizeSend];
-  unsigned char hammer;
   do {
-    hammer=delays[0];
-    DELAY_HAMMER(hammer, SET_BIT(false));
+    DELAY_HAMMER(delays[0], SET_BIT(false));
     unsigned char bit = MSB_FIRST ? 1 << 7 : 1;
     do {
-      hammer=delays[1];
       bool bitBool = *send & bit ? true : false;
-      DELAY_HAMMER(hammer, SET_BIT(bitBool));
+      DELAY_HAMMER(delays[1], SET_BIT(bitBool));
       MSB_FIRST ? bit >>= 1 : bit <<= 1;
     } while (bit);
-    hammer=delays[2];
-    DELAY_HAMMER(hammer, SET_BIT(true));
+    DELAY_HAMMER(delays[2], SET_BIT(true));
     DELAY(delays[2]);
   } while (++send < end);
 }
