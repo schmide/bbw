@@ -7,15 +7,6 @@
 */
 
 #define TIME() micros()
-#define DUCKGOOSEEGG(duck, goose, egg) ( [=, &egg]() { if (duck - egg < goose) return 0; egg = duck; return -1; } () )
-#define DUCKGOOSE(duck, goose) ( [=]() { static unsigned long egg = 0; if (duck - egg < goose) return 0; egg = duck; return -1; } () )
-
-void DelayMicro(unsigned long micro)
-{
-  unsigned long egg = TIME() + micro;
-  while (TIME() < egg);
-}
-
 #define INPUT_PIN 13
 #define OUTPUT_PIN 18
 #define MSB_FIRST true
@@ -24,7 +15,6 @@ void DelayMicro(unsigned long micro)
 #define PERIOD_SLEW (0.5 * PERIOD_DELAY_MICRO)
 #define STARTDELAY (13 * PERIOD_DELAY_MICRO)
 #define READTIMEOUT (32 * PERIOD_DELAY_MICRO)
-//#define DELAY(a) DelayMicro((unsigned long)(a))
 #define DELAY(a) { unsigned long egg = TIME() + (unsigned long)(a); while (TIME() <= egg); }
 #define DELAY_HAMMER(a, b) { unsigned char h=a; do { (b); } while(--h); } 
 #define SET_BIT(a) digitalWrite(OUTPUT_PIN, a)
@@ -32,7 +22,6 @@ void DelayMicro(unsigned long micro)
 
 unsigned char sendBuffer[] = { 0xaa, 0x9c, 0x55, 0xaa, 0x9c, 0x55, 0xaa, 0x9c, 0x55, 0xaa, 0x9c, 0x55, 0xaa, 0x9c, 0x55, 0xaa, 0x9c, 0x55, 0xaa, 0x9c, 0x55, 0xaa, 0x9c, 0x55 };
 unsigned char receiveBuffer[9];
-float defaultReceiveDelays[] = { 1.0 * PERIOD_SLEW, 1.0 * READTIMEOUT, 1.0 * PERIOD_DELAY_MICRO, 1.0 * PERIOD_DELAY_MICRO, 1.0 * PERIOD_DELAY_MICRO, 1.0 * PERIOD_DELAY_MICRO, 1 };
 unsigned char defaultSendDelays[] = { \
 (unsigned char)(1.0 * PERIOD_DELAY_MICRO), \
 (unsigned char)(1.0 * PERIOD_DELAY_MICRO), \
@@ -52,7 +41,7 @@ void SendBytes(unsigned char *send, int sizeSend, unsigned char *delays = defaul
     DELAY_HAMMER(delays[2], SET_BIT(true));
   } while (++send < end);
 }
-
+/*
 // not near done.
 int ReceiveBytes(unsigned char *receive, int sizeReceive, float *delays = defaultReceiveDelays)
 {
@@ -84,6 +73,7 @@ int ReceiveBytes(unsigned char *receive, int sizeReceive, float *delays = defaul
   } while (++receive < end);
   return readCount;
 }
+*/
 
 void setup() {
   Serial.begin(9600);
