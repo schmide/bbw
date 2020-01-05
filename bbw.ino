@@ -62,7 +62,7 @@ void setup() {
   pinMode(INPUT_PIN, INPUT);
   pinMode(OUTPUT_PIN, OUTPUT);
   SET_BIT(true);
-  Serial1.begin(38400);
+//  Serial1.begin(38400);
 }
 
 bool state = true;
@@ -76,7 +76,7 @@ void loop() {
 //    Serial.println(((unsigned int)defaultSendDelays[3]));
     //  ReceiveBytes(receiveBuffer, sizeof(receiveBuffer) / sizeof(receiveBuffer[0]));
   } else {
-    Serial1.write(sendBuffer, sizeof(sendBuffer) / sizeof(sendBuffer[0]));
+//    Serial1.write(sendBuffer, sizeof(sendBuffer) / sizeof(sendBuffer[0]));
     delay(100);
   }
 }
