@@ -19,7 +19,7 @@
 // below tested on 16mhz mega
 #define PERIOD_BAUD 38400.0
 #define PERIOD_ADJUST 1.0
-#define PERIOD_SHIFT 3.0 // shifts the data to the left 38400 likes 3-4 57600 5+
+#define PERIOD_SHIFT 2.0 // shifts the data to the left 38400 likes 2-4 57600 5+
 #define PERIOD_DELAY_MICRO (1000000.0 * PERIOD_ADJUST / PERIOD_BAUD)
 #define PERIOD_SLEW (0.5 * PERIOD_DELAY_MICRO)
 #define STARTDELAY (13 * PERIOD_DELAY_MICRO)
@@ -32,10 +32,7 @@
 
 unsigned char sendBuffer[] = { 0xaa, 0x9c, 0x55, 0xaa, 0x9c, 0x55, 0xaa, 0x9c, 0x55, 0xaa, 0x9c, 0x55, 0xaa, 0x9c, 0x55, 0xaa, 0x9c, 0x55, 0xaa, 0x9c, 0x55, 0xaa, 0x9c, 0x55 };
 unsigned char receiveBuffer[9];
-unsigned int defaultSendDelays[] = { \
-(unsigned int)(1.0 * PERIOD_DELAY_MICRO - PERIOD_SHIFT), \ 
-(unsigned int)(1.0 * PERIOD_DELAY_MICRO), \
-(unsigned int)(10.0 * PERIOD_DELAY_MICRO) };
+unsigned int defaultSendDelays[] = { (unsigned int)(1.0 * PERIOD_DELAY_MICRO - PERIOD_SHIFT), (unsigned int)(1.0 * PERIOD_DELAY_MICRO), (unsigned int)(10.0 * PERIOD_DELAY_MICRO) };
 
 void SendBytes(unsigned char *send, int sizeSend, unsigned int *delays = defaultSendDelays)
 {
