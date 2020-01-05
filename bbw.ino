@@ -18,7 +18,8 @@
 #define MSB_FIRST false
 // below tested on 16mhz mega
 #define PERIOD_BAUD 38400.0
-#define PERIOD_ADJUST 0.96
+#define PERIOD_ADJUST 1.0
+#define PERIOD_SHIFT 3.0 // shifts the data to the left 38400 likes 3-4 57600 5+
 #define PERIOD_DELAY_MICRO (1000000.0 * PERIOD_ADJUST / PERIOD_BAUD)
 #define PERIOD_SLEW (0.5 * PERIOD_DELAY_MICRO)
 #define STARTDELAY (13 * PERIOD_DELAY_MICRO)
@@ -32,44 +33,39 @@
 unsigned char sendBuffer[] = { 0xaa, 0x9c, 0x55, 0xaa, 0x9c, 0x55, 0xaa, 0x9c, 0x55, 0xaa, 0x9c, 0x55, 0xaa, 0x9c, 0x55, 0xaa, 0x9c, 0x55, 0xaa, 0x9c, 0x55, 0xaa, 0x9c, 0x55 };
 unsigned char receiveBuffer[9];
 unsigned int defaultSendDelays[] = { \
-(unsigned int)(1.0 * PERIOD_DELAY_MICRO), \
-(unsigned int)(1.0 * PERIOD_DELAY_MICRO), \
+(unsigned int)(1.0 * PERIOD_DELAY_MICRO - PERIOD_SHIFT), \ 
 (unsigned int)(1.0 * PERIOD_DELAY_MICRO), \
 (unsigned int)(10.0 * PERIOD_DELAY_MICRO) };
 
 void SendBytes(unsigned char *send, int sizeSend, unsigned int *delays = defaultSendDelays)
 {
   unsigned char *end = &send[sizeSend];
+  SET_BIT(true); // sync to port
   unsigned long startTime = TIME();
-  DELAY_UNTIL(startTime+delays[0]); // one period to get in sync    
-  startTime = TIME();
   do {
     SET_BIT(false);
-    unsigned long nextTime = startTime+delays[1];
+    unsigned long nextTime = startTime+delays[0];
     DELAY_UNTIL(nextTime);    
     unsigned char bit = MSB_FIRST ? 1 << 7 : 1;
     do {
       bool bitBool = *send & bit ? true : false;
       SET_BIT(bitBool);
-      nextTime += delays[2];
+      nextTime += delays[1];
       MSB_FIRST ? bit >>= 1 : bit <<= 1;
       DELAY_UNTIL(nextTime);    
     } while (bit);
     SET_BIT(true);
-    startTime+=delays[3];
+    startTime+=delays[2];
     DELAY_UNTIL(startTime);    
   } while (++send < end);
 }
-
-//      DELAY_HAMMER(delays[2], SET_BIT(bitBool));
-
 
 void setup() {
   Serial.begin(9600);
   pinMode(INPUT_PIN, INPUT);
   pinMode(OUTPUT_PIN, OUTPUT);
   SET_BIT(true);
-  Serial1.begin(115200);
+  Serial1.begin(38400);
 }
 
 bool state = true;
