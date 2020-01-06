@@ -24,13 +24,14 @@
 #define PERIOD_SLEW (0.5 * PERIOD_DELAY_MICRO)
 #define STARTDELAY (13 * PERIOD_DELAY_MICRO)
 #define READTIMEOUT (32 * PERIOD_DELAY_MICRO)
-#define DELAY(a) { unsigned long egg = TIME() + ((unsigned long)(a)); while (TIME() <= egg); }
+//#define DELAY(a) { unsigned long egg = TIME() + ((unsigned long)(a)); while (TIME() <= egg); }
+//#define DELAY(a) { unsigned long egg = ((unsigned long)(a); while (--egg); }
 #define DELAY_UNTIL(a) { unsigned long egg = (unsigned long)(a); while (TIME() <= egg); }
 #define DELAY_HAMMER(a, b) { unsigned char h=a; do { (b); } while(--h); } 
 #define SET_BIT(a) digitalWrite(OUTPUT_PIN, a)
 #define GET_BIT() digitalRead(INPUT_PIN)
 
-unsigned char sendBuffer[] = { 0xaa, 0x9c, 0x55, 0xaa, 0x9c, 0x55, 0xaa, 0x9c, 0x55, 0xaa, 0x9c, 0x55, 0xaa, 0x9c, 0x55, 0xaa, 0x9c, 0x55, 0xaa, 0x9c, 0x55, 0xaa, 0x9c, 0x55 };
+unsigned char sendBuffer[] = { 0xaa }; //, 0x9c, 0x55, 0xaa, 0x9c, 0x55, 0xaa, 0x9c, 0x55, 0xaa, 0x9c, 0x55, 0xaa, 0x9c, 0x55, 0xaa, 0x9c, 0x55, 0xaa, 0x9c, 0x55, 0xaa, 0x9c, 0x55 };
 unsigned char receiveBuffer[9];
 unsigned int defaultSendDelays[] = { (unsigned int)(1.0 * PERIOD_DELAY_MICRO - PERIOD_SHIFT), (unsigned int)(1.0 * PERIOD_DELAY_MICRO), (unsigned int)(10.0 * PERIOD_DELAY_MICRO) };
 
@@ -68,15 +69,18 @@ void setup() {
 bool state = true;
 
 void loop() {
+  unsigned long startTime = TIME();
   if (true) {
     SendBytes(sendBuffer, sizeof(sendBuffer) / sizeof(sendBuffer[0]));
 //    DELAY(16);
-    delay(100);
+//    delay(10);
 //    Serial.print("Delay = ");
 //    Serial.println(((unsigned int)defaultSendDelays[3]));
     //  ReceiveBytes(receiveBuffer, sizeof(receiveBuffer) / sizeof(receiveBuffer[0]));
   } else {
 //    Serial1.write(sendBuffer, sizeof(sendBuffer) / sizeof(sendBuffer[0]));
-    delay(100);
+//    delay(10);
   }
+  DELAY_UNTIL(startTime+1000);    
+//    delay(10);
 }
