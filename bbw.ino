@@ -20,7 +20,7 @@
 #define OUTPUT_PIN 7
 #define MSB_FIRST false
 // below derived on 16mhz mega
-#define PERIOD_BAUD 9600.0
+#define PERIOD_BAUD 153600.0
 #define PERIOD_MHZ 16000000.0
 #define PERIOD 1000000.0
 #define PERIOD_LOW 9600.0
