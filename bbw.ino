@@ -8,7 +8,7 @@
   So I started building a linear equation to translate mhz baud and period such 
   that it would map from 9600-115200. As I was doing it the mhz and baud would
   each become unnecessary. Well it turns out 115200 * 100 / 16mhz = 0.72 and
-  the max it will run at it 16 * 9600 = 153600. I can only assume the writing to 
+  the max it will run at is 16 * 9600 = 153600. I can only assume the writing to 
   the ports is keeping things synchronized. 
 
   Actual PERIOD_DELAY is 2 nanoseconds or 1:500000
