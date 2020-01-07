@@ -20,7 +20,7 @@
 #define DEFAULT_LOGIC true
 #define MSB_FIRST false
 // below derived on 16mhz mega
-#define PERIOD_BAUD 38400.0
+#define PERIOD_BAUD 115200.0
 #define PERIOD_MHZ 16000000.0
 #define PERIOD 1000000.0
 #define PERIOD_LOW 9600.0
@@ -36,7 +36,7 @@
 #define SET_BIT(a) digitalWrite(OUTPUT_PIN, a)
 #define GET_BIT() digitalRead(INPUT_PIN)
 
-unsigned char sendBuffer[] = { 0xaa, 0x9c, 0x55, 0xaa, 0x9c, 0x55, 0xaa, 0x9c, 0x55, 0xaa, 0x9c, 0x55, 0xaa, 0x9c, 0x55, 0xaa, 0x9c, 0x55, 0xaa, 0x9c, 0x55 };
+unsigned char sendBuffer[] = { 0xaa , 0x9c}; //, 0x55, 0xaa, 0x9c, 0x55}; //, 0xaa, 0x9c, 0x55, 0xaa, 0x9c, 0x55, 0xaa, 0x9c, 0x55, 0xaa, 0x9c, 0x55, 0xaa, 0x9c, 0x55 };
 unsigned char receiveBuffer[9];
 unsigned long defaultSendDelays[] = { \
                                       (unsigned long)(1.0 * PERIOD_DELAY + PERIOD_SHIFT), \
